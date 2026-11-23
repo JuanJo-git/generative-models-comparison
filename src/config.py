@@ -27,3 +27,13 @@ class AEConfig:
     sparse_hidden: int = 256   # lapisan sparse (Sparse AE)
     sparse_lambda: float = 1e-3  # bobot penalti L1 pada aktivasi laten
     vae_beta: float = 1.0      # bobot KL pada VAE
+
+
+@dataclass
+class GANConfig:
+    epochs: int = 30
+    lr: float = 2e-4           # Radford et al. (DCGAN)
+    beta1: float = 0.5
+    beta2: float = 0.999
+    z_dim: int = Z_DIM_GAN
+    progress_every: int = 5    # simpan grid sampel tiap N epoch (pantau mode collapse)

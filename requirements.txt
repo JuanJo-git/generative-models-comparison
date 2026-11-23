@@ -1,0 +1,6 @@
+numpy
+matplotlib
+scikit-image
+torchmetrics[image]
+torch-fidelity
+tqdm 

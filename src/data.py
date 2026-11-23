@@ -1,14 +1,20 @@
 """Data loader: Fashion-MNIST dengan split 80/10/10 dan seed tetap.
 
-Piksel disimpan di [0, 1] (ToTensor). Model berbasis Tanh (GAN/DCGAN/DDPM)
-mengonversi ke [-1, 1] lewat to_minus1_1 / to_zero1 agar metrik dihitung
-pada skala yang sama.
+Seluruh dataset (70.000 citra) dimuat sekali ke memori sebagai tensor float [0, 1]
+agar training jauh lebih cepat daripada transformasi PIL per sampel.
+Pembagian split identik dengan versi sebelumnya (random_split dengan seed yang sama).
+
+Model berbasis Tanh (GAN/DCGAN/DDPM) mengonversi ke [-1, 1] lewat to_minus1_1 /
+to_zero1 agar metrik tetap dihitung pada skala yang sama.
 """
 import torch
-from torch.utils.data import DataLoader, random_split
-from torchvision import datasets, transforms
+from torch.utils.data import DataLoader, TensorDataset, random_split
+from torchvision import datasets
 
-from .config import (BATCH_SIZE, DATA_DIR, SEED, TRAIN_FRAC, VAL_FRAC)
+from .config import BATCH_SIZE, DATA_DIR, SEED, TRAIN_FRAC, VAL_FRAC
+
+CLASS_NAMES = ["T-shirt", "Trouser", "Pullover", "Dress", "Coat",
+               "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"]
 
 
 def to_minus1_1(x: torch.Tensor) -> torch.Tensor:
@@ -20,11 +26,12 @@ def to_zero1(x: torch.Tensor) -> torch.Tensor:
 
 
 def get_datasets():
-    tfm = transforms.ToTensor()  # [0, 1], shape (1, 28, 28)
     # Gabungkan train+test resmi (70.000) lalu split ulang 80/10/10.
-    train_full = datasets.FashionMNIST(DATA_DIR, train=True, download=True, transform=tfm)
-    test_full = datasets.FashionMNIST(DATA_DIR, train=False, download=True, transform=tfm)
-    full = torch.utils.data.ConcatDataset([train_full, test_full])
+    tr = datasets.FashionMNIST(DATA_DIR, train=True, download=True)
+    te = datasets.FashionMNIST(DATA_DIR, train=False, download=True)
+    x = torch.cat([tr.data, te.data]).float().div_(255.0).unsqueeze(1)  # (70000,1,28,28)
+    y = torch.cat([tr.targets, te.targets])
+    full = TensorDataset(x, y)
 
     n = len(full)
     n_train = int(TRAIN_FRAC * n)
@@ -36,8 +43,7 @@ def get_datasets():
 
 def get_loaders(batch_size: int = BATCH_SIZE, num_workers: int = 0):
     train_ds, val_ds, test_ds = get_datasets()
-    train = DataLoader(train_ds, batch_size=batch_size, shuffle=True,
-                       num_workers=num_workers, drop_last=False)
+    train = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val = DataLoader(val_ds, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     test = DataLoader(test_ds, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     return train, val, test

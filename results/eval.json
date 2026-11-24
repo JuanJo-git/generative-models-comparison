@@ -1,0 +1,79 @@
+{
+  "fid": {
+    "real_train": 4.321871280670166,
+    "vae": 87.87773132324219,
+    "vanilla_gan": 143.8816375732422,
+    "dcgan": 24.106563568115234,
+    "ddpm": 11.278599739074707
+  },
+  "fid_protocol": {
+    "n_generated": 5000,
+    "real_reference": "test set (7000)",
+    "feature": "InceptionV3 pool3 2048",
+    "preprocess": "gray->3ch, resize 299"
+  },
+  "sparsity": {
+    "vanilla_ae": {
+      "mean_abs_activation": 1.0140883922576904,
+      "fraction_active": 0.5675725340843201,
+      "mean_active_units_per_image": 145.29856872558594,
+      "dead_units": 60,
+      "hidden_units": 256
+    },
+    "sparse_ae": {
+      "mean_abs_activation": 0.2810179889202118,
+      "fraction_active": 0.38824498653411865,
+      "mean_active_units_per_image": 99.39071655273438,
+      "dead_units": 74,
+      "hidden_units": 256
+    }
+  },
+  "interpolation": {
+    "alphas": [
+      0.0,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "pair": [
+      "Trouser",
+      "Ankle boot"
+    ],
+    "latent_gap_normalized": {
+      "vanilla_ae": [
+        1.124043345451355,
+        1.1695994138717651,
+        1.5159666538238525,
+        1.4965434074401855,
+        1.2525582313537598,
+        1.3897148370742798
+      ],
+      "sparse_ae": [
+        1.2018640041351318,
+        1.2789061069488525,
+        1.4470233917236328,
+        1.6243526935577393,
+        1.421999454498291,
+        1.4794251918792725
+      ],
+      "vae": [
+        0.9360593557357788,
+        1.1019278764724731,
+        1.4058421850204468,
+        1.4782358407974243,
+        1.4207804203033447,
+        1.379077672958374
+      ]
+    }
+  },
+  "params": {
+    "vanilla_ae": 435536,
+    "sparse_ae": 435536,
+    "vae": 451984,
+    "vanilla_gan": 1486352,
+    "dcgan": 771969,
+    "ddpm": 3296961
+  }
+}
